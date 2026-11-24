@@ -1,0 +1,19 @@
+version: '3'
+
+tasks:
+  up:
+    desc: Start the Docker Compose environment
+    cmds:
+      - docker compose up -d
+
+  down:
+    desc: Stop and remove the Docker Compose environment
+    cmds:
+      - docker compose down --remove-orphans
+
+  clean:
+    desc: Remove containers, images, volumes, and generated artifacts
+    cmds:
+      - docker compose down --rmi all --volumes --remove-orphans
+      - rm -rf neo4j_data neo4j_logs import
+      - find . -type d -name .ipynb_checkpoints -prune -exec rm -rf {} +
