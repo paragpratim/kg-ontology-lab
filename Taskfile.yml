@@ -1,10 +1,17 @@
 version: '3'
 
+dotenv: ['.env']
+
 tasks:
   up:
     desc: Start the Docker Compose environment
     cmds:
       - docker compose up -d
+
+  seed:
+    desc: Seed the Neo4j graph with the initial governance dataset
+    cmds:
+      - docker exec -i kg-neo4j cypher-shell -u "$NEO4J_USER" -p "$NEO4J_PASSWORD" < init/01_governance_kg.cypher
 
   down:
     desc: Stop and remove the Docker Compose environment
