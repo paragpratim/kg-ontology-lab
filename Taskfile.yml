@@ -4,9 +4,17 @@ dotenv: ['.env']
 
 tasks:
   up:
-    desc: Start the Docker Compose environment
+    desc: Start the environment and make the default LLM available
     cmds:
-      - docker compose up -d
+      - docker compose up -d --wait --wait-timeout 900
+      - task: llm-pull
+
+  llm-pull:
+    desc: Download the default local LLM if it is missing
+    status:
+      - docker compose exec -T ollama ollama show llama3.2:3b > /dev/null 2>&1
+    cmds:
+      - docker compose exec -T ollama ollama pull llama3.2:3b
 
   seed:
     desc: Seed the Neo4j graph with the initial governance dataset
@@ -19,7 +27,7 @@ tasks:
       - docker compose down --remove-orphans
 
   clean:
-    desc: Remove containers, images, volumes, and generated artifacts
+    desc: Remove containers, images, volumes (including LLM models), and generated artifacts
     cmds:
       - docker compose down --rmi all --volumes --remove-orphans
       - rm -rf neo4j_data neo4j_logs import
